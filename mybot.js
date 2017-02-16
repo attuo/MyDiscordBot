@@ -2,7 +2,7 @@ var Discord = require("discord.js");
 var request = require("request");
 var bot = new Discord.Client();
 var fs = require('fs');
-
+var config = require('./config.js');
 
 bot.on("message", msg => {
   // Set the prefix
@@ -23,13 +23,15 @@ bot.on("message", msg => {
     msg.channel.sendMessage(roll(text));
     }
   else if (msg.content.startsWith(prefix + "xkcdrandom")) {
-    xkcdRandom(function (imgUrl) {
-      msg.channel.sendMessage(imgUrl);
+    xkcdRandom(function (comicInfos) {
+      msg.channel.sendMessage(comicInfos[0]);
+      msg.channel.sendMessage("Alt text: " + comicInfos[1]);
     });
   }
   else if (msg.content.startsWith(prefix + "xkcdlatest")) {
-    latestXkcd(function (imgUrl) {
-      msg.channel.sendMessage(imgUrl);
+    latestXkcd(function (comicInfos) {
+      msg.channel.sendMessage(comicInfos[0]);
+      msg.channel.sendMessage("Alt text: " + comicInfos[1]);
     });
   }
 });
@@ -41,8 +43,8 @@ function xkcdRandom(callback) {
     if (randomNumber == 404) getRandomInteger(1, response);
     var xkcdUrl = "http://xkcd.com/" + randomNumber + "/info.0.json";
     getXkcdUrlAndTitle(xkcdUrl, (function(response) {
-      imgUrl = response;
-      callback(imgUrl);
+      comicInfos = response;
+      callback(comicInfos);
     })
   )
   });
@@ -50,11 +52,11 @@ function xkcdRandom(callback) {
 
 function latestXkcd(callback) {
     getLatestXkcdNumber(function(response) {
-    latest = response;
+    var latest = response;
     var xkcdUrl = "http://xkcd.com/" + latest + "/info.0.json";
     getXkcdUrlAndTitle(xkcdUrl, (function(response) {
-      imgUrl = response;
-      callback(imgUrl);
+      var comicInfos = response;
+      callback(comicInfos);
     }))
 });
 }
@@ -72,13 +74,10 @@ function getXkcdUrlAndTitle(url, callback) {
   request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       xkcdBody = JSON.parse(body);
-      console.log(xkcdBody);
       imgUrl = xkcdBody["img"];
-      console.log(imgUrl + " urli");
       imgAlt = xkcdBody["alt"];
-      console.log(imgAlt + "altti");
       var infos = [imgUrl, imgAlt];
-      callback();
+      callback(infos);
     }
 });
 }
@@ -126,4 +125,4 @@ function showError() {
 }
 
 
-bot.login(INSERT YOUR KEY HERE);
+bot.login(config.discord.key);
