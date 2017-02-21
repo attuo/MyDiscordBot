@@ -5,7 +5,7 @@ var fs = require('fs');
 var config = require('./config.js');
 
 
-// WHere the user inputs are checked and will call some function
+// Where the user inputs are checked and will call some function
 bot.on("message", msg => {
   // Set the prefix
   let prefix = "!";
