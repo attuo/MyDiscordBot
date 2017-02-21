@@ -105,11 +105,11 @@ function roll(str) {
     return rollResult;
   }
 
-  else if (arrayText.length == 3) {
+  else if (arrayText.length === 3) {
     var min = Number(arrayText[1]);
     var max = Number(arrayText[2]);
 
-      if (min < max && min != NaN && max != NaN) {
+      if (min < max && min !== NaN && max !== NaN) {
       rollResult = getRandomInteger(max, min);
       return rollResult;
       }
